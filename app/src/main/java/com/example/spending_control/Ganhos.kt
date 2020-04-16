@@ -1,23 +1,18 @@
 package com.example.spending_control
 
-import android.content.Context
+
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
-import androidx.core.view.get
-import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.database.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_despesas.view.*
 import kotlinx.android.synthetic.main.activity_ganhos.*
-import kotlinx.android.synthetic.main.lista_ganho.*
-import java.lang.reflect.Type
+import kotlinx.android.synthetic.main.activity_main.*
 
 class Ganhos : AppCompatActivity() {
     lateinit var UserList: ArrayList<User>
@@ -27,6 +22,9 @@ class Ganhos : AppCompatActivity() {
     lateinit var imgDelLast: ImageButton
     lateinit var imgDelAll: ImageButton
     lateinit var arrayListaID: ArrayList<String>
+    //Variável que armazenará o idgoogle do usuário logado
+    var GOOGLEUSERID: String = ""
+    lateinit var googleSignInClient: GoogleSignInClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +43,29 @@ class Ganhos : AppCompatActivity() {
         imgDelLast.setOnClickListener { removerLast() }
         imgDelAll.setOnClickListener { removerAll() }
 
+
+        //Login Google
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .requestProfile()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        val acct = GoogleSignIn.getLastSignedInAccount(this)
+
+        if (acct != null) {
+
+            var userid: String? = acct.id
+            //GOOGLEUSERID não pode receber valor null, pois ele será utilizado no orderbychild que tbm não aceita null
+            //Por isso o if
+            if (userid!!.isNotEmpty()) {
+                GOOGLEUSERID = userid.toString()
+            }
+
+        }
+
         get()
         //teste()
         getUnique()
@@ -60,7 +81,7 @@ class Ganhos : AppCompatActivity() {
         val UID = refGanho.push().key.toString()
         idinsert = UID
 
-        val USU = User(username, nome, valor.toDouble(), idinsert)
+        val USU = User(GOOGLEUSERID, nome, valor.toDouble(), idinsert)
 
         refGanho.child(UID).setValue(USU).addOnCompleteListener {
             Toast.makeText(this, "INSERT FEITO COM SUCESSO", Toast.LENGTH_SHORT).show()
@@ -70,7 +91,9 @@ class Ganhos : AppCompatActivity() {
     }
 
     private fun get() {
-        refGanho.orderByChild("username").equalTo("Caio").addValueEventListener(object :
+        //addValueEventListener chama o tempo todo o evento
+        //essa função joga os dados da minha pesquisa numa lista, por consequente a lista mostra para o usuário os dados
+        refGanho.orderByChild("userid").equalTo(GOOGLEUSERID).addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
 
@@ -96,33 +119,39 @@ class Ganhos : AppCompatActivity() {
         })
     }
 
-    //FUNÇÃO PARA VERIFICAR NO BANCO SE EXISTE CERTO TIPO DE INFORMAÇÃO
-    private fun teste() {
-        refGanho.orderByChild("username").equalTo("Caio").addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
-                if (p0!!.exists()) {
-
-                    Toast.makeText(applicationContext, "DEU BOM MAGO", Toast.LENGTH_LONG).show()
-                } else {
-                    Toast.makeText(applicationContext, "DEU RUIM MAGO", Toast.LENGTH_LONG).show()
-                }
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })
-    }
-
     private fun removerAll() {
-        refGanho.removeValue().addOnCompleteListener {
-            Toast.makeText(this, "Todas informações removidas com sucesso", Toast.LENGTH_LONG)
-                .show()
-        }
+        //addListenerForSingleValueEvent chama apenas uma vez o evento
+        //Essa função verifica se o userid existe dentro do banco, se existir executa o evento dentro do if
+        refGanho.orderByChild("userid").equalTo(GOOGLEUSERID)
+            .addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(p0: DataSnapshot) {
+
+                    if (p0!!.exists()) {
+                        UserList.clear()
+                        for (h in p0.children) {
+                            h.ref.removeValue()
+                        }
+
+                        val adapter =
+                            AdapterGanhos(applicationContext, R.layout.lista_ganho, UserList)
+                        listaGanhos.adapter = adapter
+                    } else {
+                        val adapter =
+                            AdapterGanhos(applicationContext, R.layout.lista_ganho, UserList)
+                        UserList.clear()
+                        listaGanhos.adapter = adapter
+                    }
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
     }
 
     private fun removerLast() {
+        //exclui o filho que tem o valor passado dentro do child
         refGanho.child(arrayListaID.last()).removeValue().addOnCompleteListener {
             Toast.makeText(this, "Ultima informação removida com sucesso", Toast.LENGTH_LONG)
                 .show()
@@ -131,26 +160,30 @@ class Ganhos : AppCompatActivity() {
     }
 
     private fun getUnique() {
-        refGanho.orderByChild("username").equalTo("Caio").addListenerForSingleValueEvent(object :
-            ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
+        //essa função joga os idinsert dentro de uma lista
+        refGanho.orderByChild("userid").equalTo(GOOGLEUSERID)
+            .addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(p0: DataSnapshot) {
 
-                if (p0!!.exists()) {
-                    for (datas in p0.getChildren()) {
-                        var unico = datas.child("idinsert").getValue().toString()
-                        arrayListaID.add(unico)
+                    if (p0!!.exists()) {
+                        for (datas in p0.getChildren()) {
+                            //pega o valor idinsert
+                            var unico = datas.child("idinsert").getValue().toString()
+                            //adiciona dentro da minha lista, essa lista será utilizada na exclusão do ultimo elemento
+                            arrayListaID.add(unico)
 
+                        }
+                    } else {
+                        Toast.makeText(applicationContext, "Nao achei", Toast.LENGTH_LONG).show()
                     }
-                } else {
-                    Toast.makeText(applicationContext, "Nao achei", Toast.LENGTH_LONG).show()
+
                 }
 
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
     }
 
 }

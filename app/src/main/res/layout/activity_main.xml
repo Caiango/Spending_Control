@@ -9,9 +9,9 @@
 
     <TextView
         android:id="@+id/txTitle"
-        android:layout_width="138dp"
-        android:layout_height="79dp"
-        android:layout_marginTop="64dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
         android:gravity="center"
         android:text="Spending Control"
         android:textSize="30dp"
@@ -22,15 +22,13 @@
 
     <TextView
         android:id="@+id/txSaldo"
-        android:layout_width="182dp"
-        android:layout_height="73dp"
-        android:layout_marginTop="44dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:text="SALDO"
         android:textSize="40dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewIni" />
 
@@ -38,35 +36,47 @@
         android:id="@+id/btGanho"
         android:layout_width="118dp"
         android:layout_height="63dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="72dp"
-        android:layout_marginRight="72dp"
+        android:layout_marginTop="44dp"
         android:background="@drawable/botao_form"
         android:text="Ganhos"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.791"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txSaldo" />
 
     <Button
         android:id="@+id/btGasto"
         android:layout_width="116dp"
         android:layout_height="62dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginLeft="68dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="44dp"
         android:background="@drawable/botao_form"
         android:text="Despesas"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.271"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txSaldo" />
 
     <ImageView
         android:id="@+id/imageViewIni"
-        android:layout_width="250dp"
-        android:layout_height="194dp"
+        android:layout_width="171dp"
+        android:layout_height="147dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txTitle"
         app:srcCompat="@mipmap/balanca3_foreground"
         tools:srcCompat="@mipmap/balanca3_foreground" />
+
+    <Button
+        android:id="@+id/ButSair"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="144dp"
+        android:background="@drawable/botao_form"
+        android:text="Sair"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txSaldo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
