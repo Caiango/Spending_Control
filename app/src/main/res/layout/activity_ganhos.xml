@@ -59,12 +59,15 @@
 
     <ListView
         android:id="@+id/listaGanhos"
-        android:layout_width="381dp"
-        android:layout_height="292dp"
+        android:layout_width="375dp"
+        android:layout_height="284dp"
         android:layout_marginTop="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
         android:id="@+id/imageExcluirGanho"

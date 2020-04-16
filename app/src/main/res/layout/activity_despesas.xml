@@ -8,23 +8,9 @@
     tools:context=".Despesas">
 
     <TextView
-        android:id="@+id/txTitleDesp"
-        android:layout_width="138dp"
-        android:layout_height="79dp"
-        android:layout_marginTop="48dp"
-        android:gravity="center"
-        android:text="Spending Control"
-        android:textSize="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/txDesp"
         android:layout_width="182dp"
         android:layout_height="73dp"
-        android:layout_marginTop="24dp"
         android:gravity="center"
         android:text="DESPESAS"
         android:textSize="20dp"
@@ -34,34 +20,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewDesp" />
 
-    <Button
-        android:id="@+id/btAddDesp"
-        android:layout_width="116dp"
-        android:layout_height="62dp"
-        android:layout_marginBottom="64dp"
-        android:background="@drawable/botao_form"
-        android:text="Add Despesa"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.535"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ImageView
         android:id="@+id/imageViewDesp"
-        android:layout_width="168dp"
-        android:layout_height="145dp"
+        android:layout_width="143dp"
+        android:layout_height="120dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txTitleDesp"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/gasto_foreground"
         tools:srcCompat="@mipmap/gasto_foreground" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/editTextDesp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:gravity="center"
         android:hint="Elemento"
@@ -71,17 +45,95 @@
         app:layout_constraintTop_toBottomOf="@+id/txDesp" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/editValorDesp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:gravity="center"
         android:hint="Valor"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextDesp" />
+
+    <ListView
+        android:id="@+id/listaDesp"
+        android:layout_width="375dp"
+        android:layout_height="284dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/imageExcluirDesp"
+        android:layout_width="52dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/ganho_background"
+        app:layout_constraintEnd_toStartOf="@+id/imageDelAllDesp"
+        app:layout_constraintHorizontal_bias="0.44"
+        app:layout_constraintStart_toEndOf="@+id/imageADDDesp"
+        app:layout_constraintTop_toBottomOf="@+id/editValorDesp"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="remove last"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageExcluirDesp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginRight="48dp"
+        android:text="remove all"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageDelAllDesp" />
+
+    <ImageButton
+        android:id="@+id/imageDelAllDesp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginRight="64dp"
+        android:background="@color/gasto_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editValorDesp"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
+
+    <ImageButton
+        android:id="@+id/imageADDDesp"
+        android:layout_width="49dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/gasto_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editValorDesp"
+        app:srcCompat="@android:drawable/ic_menu_add" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:layout_marginLeft="56dp"
+        android:text="add ganho"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageADDDesp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
