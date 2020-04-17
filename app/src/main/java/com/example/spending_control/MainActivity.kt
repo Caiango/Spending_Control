@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var btDesp: Button
     lateinit var btGanho: Button
-    var USERID: String = ""
 
     lateinit var googleSignInClient: GoogleSignInClient
 

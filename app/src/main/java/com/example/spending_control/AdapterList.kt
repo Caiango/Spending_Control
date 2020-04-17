@@ -9,7 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
-class AdapterGanhos(val mCtx: Context, val layoutResId: Int, val userList: List<User>) :
+class AdapterList(val mCtx: Context, val layoutResId: Int, val userList: List<User>) :
     ArrayAdapter<User>(mCtx, layoutResId, userList) {
 
 

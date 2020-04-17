@@ -1,7 +1,6 @@
 package com.example.spending_control
 
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
@@ -12,7 +11,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_ganhos.*
-import kotlinx.android.synthetic.main.activity_main.*
 
 class Ganhos : AppCompatActivity() {
     lateinit var UserList: ArrayList<User>
@@ -22,6 +20,8 @@ class Ganhos : AppCompatActivity() {
     lateinit var imgDelLast: ImageButton
     lateinit var imgDelAll: ImageButton
     lateinit var arrayListaID: ArrayList<String>
+    var valorGanho: Int = 0
+
     //Variável que armazenará o idgoogle do usuário logado
     var GOOGLEUSERID: String = ""
     lateinit var googleSignInClient: GoogleSignInClient
@@ -39,7 +39,14 @@ class Ganhos : AppCompatActivity() {
         listaGanhos = findViewById(R.id.listaGanhos)
         imgDelLast = findViewById(R.id.imageExcluirGanho)
         imgDelAll = findViewById(R.id.imageDelAll)
-        btnAddGanhos.setOnClickListener { inserirGanho() }
+        btnAddGanhos.setOnClickListener {
+            if (editTextGanho.text.isEmpty() && editValorGanho.text.isEmpty()) {
+                editTextGanho.setError("Insira o nome do produto")
+                editValorGanho.setError("Insira um valor")
+            } else {
+                inserirGanho()
+            }
+        }
         imgDelLast.setOnClickListener { removerLast() }
         imgDelAll.setOnClickListener { removerAll() }
 
@@ -67,7 +74,6 @@ class Ganhos : AppCompatActivity() {
         }
 
         get()
-        //teste()
         getUnique()
     }
 
@@ -76,7 +82,10 @@ class Ganhos : AppCompatActivity() {
         var valor: String = editValorGanho.text.toString().trim()
         var idinsert: String = ""
 
-        val username = "Caio"
+        var valorGanho2 = editValorGanho.text.toString().trim().toInt()
+        valorGanho += valorGanho2
+
+        Toast.makeText(this, valorGanho.toString(), Toast.LENGTH_SHORT).show()
 
         val UID = refGanho.push().key.toString()
         idinsert = UID
@@ -104,10 +113,10 @@ class Ganhos : AppCompatActivity() {
                         UserList.add(user!!)
                     }
 
-                    val adapter = AdapterGanhos(applicationContext, R.layout.lista_ganho, UserList)
+                    val adapter = AdapterList(applicationContext, R.layout.lista_layout, UserList)
                     listaGanhos.adapter = adapter
                 } else {
-                    val adapter = AdapterGanhos(applicationContext, R.layout.lista_ganho, UserList)
+                    val adapter = AdapterList(applicationContext, R.layout.lista_layout, UserList)
                     UserList.clear()
                     listaGanhos.adapter = adapter
                 }
@@ -134,11 +143,11 @@ class Ganhos : AppCompatActivity() {
                         }
 
                         val adapter =
-                            AdapterGanhos(applicationContext, R.layout.lista_ganho, UserList)
+                            AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         listaGanhos.adapter = adapter
                     } else {
                         val adapter =
-                            AdapterGanhos(applicationContext, R.layout.lista_ganho, UserList)
+                            AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         UserList.clear()
                         listaGanhos.adapter = adapter
                     }

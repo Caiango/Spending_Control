@@ -18,7 +18,10 @@
         </activity>
         <activity android:name=".Ganhos" />
         <activity android:name=".Despesas" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity">
+
+        </activity>
+
     </application>
 
 </manifest>
