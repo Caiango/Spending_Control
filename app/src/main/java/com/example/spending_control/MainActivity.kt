@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mGastos: Despesas
     lateinit var mGanhos: Ganhos
 
-    var saldo: Int = 0
+    var saldo: Double = 0.0
 
     lateinit var googleSignInClient: GoogleSignInClient
 

@@ -22,7 +22,7 @@ class Ganhos : AppCompatActivity() {
     lateinit var imgDelAll: ImageButton
     lateinit var arrayListaID: ArrayList<String>
     lateinit var arrayListaValor: ArrayList<String>
-    var valorGanho: Int = 0
+    var valorGanho: Double = 0.0
 
     //Variável que armazenará o idgoogle do usuário logado
     var GOOGLEUSERID: String = ""
@@ -150,7 +150,7 @@ class Ganhos : AppCompatActivity() {
                         val adapter =
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         listaGanhos.adapter = adapter
-                        valorGanho = 0
+                        valorGanho = 0.0
                         salvarSaldo()
                     } else {
                         val adapter =
