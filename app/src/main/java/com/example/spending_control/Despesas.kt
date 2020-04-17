@@ -20,6 +20,7 @@ class Despesas : AppCompatActivity() {
     lateinit var imgDelLast: ImageButton
     lateinit var imgDelAll: ImageButton
     lateinit var arrayListaID: ArrayList<String>
+    lateinit var arrayListaValor: ArrayList<String>
     var valorDesp: Int = 0
 
     //Variável que armazenará o idgoogle do usuário logado
@@ -31,6 +32,7 @@ class Despesas : AppCompatActivity() {
         setContentView(R.layout.activity_despesas)
         UserList = arrayListOf()
         arrayListaID = arrayListOf()
+        arrayListaValor = arrayListOf()
 
         refGastos = FirebaseDatabase.getInstance().getReference("Gastos")
 
@@ -143,6 +145,7 @@ class Despesas : AppCompatActivity() {
                         val adapter =
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         listaGastos.adapter = adapter
+                        valorDesp = 0
                     } else {
                         val adapter =
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
@@ -163,11 +166,13 @@ class Despesas : AppCompatActivity() {
             Toast.makeText(this, "Ultima informação removida com sucesso", Toast.LENGTH_LONG)
                 .show()
             getUnique()
+            removerUltimoValor()
         }
     }
 
     private fun getUnique() {
-        //essa função joga os idinsert dentro de uma lista
+        //essa função joga os idinsert dentro de uma lista (arrayListaID)
+        //essa função tbm joga os valores dentro de uma lista (arrayListaValor)
         refGastos.orderByChild("userid").equalTo(GOOGLEUSERID)
             .addListenerForSingleValueEvent(object :
                 ValueEventListener {
@@ -176,9 +181,11 @@ class Despesas : AppCompatActivity() {
                     if (p0!!.exists()) {
                         for (datas in p0.getChildren()) {
                             //pega o valor idinsert
-                            var unico = datas.child("idinsert").getValue().toString()
+                            var unicoID = datas.child("idinsert").getValue().toString()
+                            var unicoValor = datas.child("valor").getValue().toString()
                             //adiciona dentro da minha lista, essa lista será utilizada na exclusão do ultimo elemento
-                            arrayListaID.add(unico)
+                            arrayListaID.add(unicoID)
+                            arrayListaValor.add(unicoValor)
 
                         }
                     } else {
@@ -191,5 +198,10 @@ class Despesas : AppCompatActivity() {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             })
+    }
+
+    fun removerUltimoValor(){
+        valorDesp -= arrayListaValor.last().toInt()
+        Toast.makeText(this, valorDesp.toString(), Toast.LENGTH_SHORT).show()
     }
 }

@@ -20,6 +20,7 @@ class Ganhos : AppCompatActivity() {
     lateinit var imgDelLast: ImageButton
     lateinit var imgDelAll: ImageButton
     lateinit var arrayListaID: ArrayList<String>
+    lateinit var arrayListaValor: ArrayList<String>
     var valorGanho: Int = 0
 
     //Variável que armazenará o idgoogle do usuário logado
@@ -32,6 +33,7 @@ class Ganhos : AppCompatActivity() {
         setContentView(R.layout.activity_ganhos)
         UserList = arrayListOf()
         arrayListaID = arrayListOf()
+        arrayListaValor = arrayListOf()
 
         refGanho = FirebaseDatabase.getInstance().getReference("Ganhos")
 
@@ -145,6 +147,7 @@ class Ganhos : AppCompatActivity() {
                         val adapter =
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         listaGanhos.adapter = adapter
+                        valorGanho = 0
                     } else {
                         val adapter =
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
@@ -165,6 +168,7 @@ class Ganhos : AppCompatActivity() {
             Toast.makeText(this, "Ultima informação removida com sucesso", Toast.LENGTH_LONG)
                 .show()
             getUnique()
+            removerUltimoValor()
         }
     }
 
@@ -179,8 +183,10 @@ class Ganhos : AppCompatActivity() {
                         for (datas in p0.getChildren()) {
                             //pega o valor idinsert
                             var unico = datas.child("idinsert").getValue().toString()
+                            var unicoValor = datas.child("valor").getValue().toString()
                             //adiciona dentro da minha lista, essa lista será utilizada na exclusão do ultimo elemento
                             arrayListaID.add(unico)
+                            arrayListaValor.add(unicoValor)
 
                         }
                     } else {
@@ -193,6 +199,11 @@ class Ganhos : AppCompatActivity() {
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             })
+    }
+
+    fun removerUltimoValor(){
+        valorGanho -= arrayListaValor.last().toInt()
+        Toast.makeText(this, valorGanho.toString(), Toast.LENGTH_SHORT).show()
     }
 
 }
