@@ -15,6 +15,7 @@ class Despesas : AppCompatActivity() {
 
     lateinit var UserList: ArrayList<User>
     lateinit var refGastos: DatabaseReference
+    lateinit var refMain: DatabaseReference
     lateinit var btnAddGastos: ImageButton
     lateinit var listaGastos: ListView
     lateinit var imgDelLast: ImageButton
@@ -35,13 +36,14 @@ class Despesas : AppCompatActivity() {
         arrayListaValor = arrayListOf()
 
         refGastos = FirebaseDatabase.getInstance().getReference("Gastos")
+        refMain = FirebaseDatabase.getInstance().getReference("Saldo")
 
         btnAddGastos = findViewById(R.id.imageADDDesp)
         listaGastos = findViewById(R.id.listaDesp)
         imgDelLast = findViewById(R.id.imageExcluirDesp)
         imgDelAll = findViewById(R.id.imageDelAllDesp)
         btnAddGastos.setOnClickListener {
-            if (editTextDesp.text.isEmpty() && editValorDesp.text.isEmpty()) {
+            if (editTextDesp.text.isEmpty() || editValorDesp.text.isEmpty()) {
                 editTextDesp.setError("Insira o nome do produto")
                 editValorDesp.setError("Insira um valor")
             } else {
@@ -96,6 +98,7 @@ class Despesas : AppCompatActivity() {
             Toast.makeText(this, "INSERT FEITO COM SUCESSO", Toast.LENGTH_SHORT).show()
         }
         getUnique()
+        salvarSaldo()
 
     }
 
@@ -146,6 +149,7 @@ class Despesas : AppCompatActivity() {
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         listaGastos.adapter = adapter
                         valorDesp = 0
+                        salvarSaldo()
                     } else {
                         val adapter =
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
@@ -167,6 +171,8 @@ class Despesas : AppCompatActivity() {
                 .show()
             getUnique()
             removerUltimoValor()
+            salvarSaldo()
+
         }
     }
 
@@ -203,5 +209,11 @@ class Despesas : AppCompatActivity() {
     fun removerUltimoValor(){
         valorDesp -= arrayListaValor.last().toInt()
         Toast.makeText(this, valorDesp.toString(), Toast.LENGTH_SHORT).show()
+    }
+
+    fun salvarSaldo(){
+        val VALOR = Valores("valordesp", valorDesp)
+        refMain.child("valorDesp").setValue(VALOR)
+
     }
 }

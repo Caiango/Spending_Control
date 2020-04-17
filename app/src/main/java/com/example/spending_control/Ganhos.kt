@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_ganhos.*
 class Ganhos : AppCompatActivity() {
     lateinit var UserList: ArrayList<User>
     lateinit var refGanho: DatabaseReference
+    lateinit var refMain: DatabaseReference
     lateinit var btnAddGanhos: ImageButton
     lateinit var listaGanhos: ListView
     lateinit var imgDelLast: ImageButton
@@ -36,13 +37,14 @@ class Ganhos : AppCompatActivity() {
         arrayListaValor = arrayListOf()
 
         refGanho = FirebaseDatabase.getInstance().getReference("Ganhos")
+        refMain = FirebaseDatabase.getInstance().getReference("Saldo")
 
         btnAddGanhos = findViewById(R.id.imageADD)
         listaGanhos = findViewById(R.id.listaGanhos)
         imgDelLast = findViewById(R.id.imageExcluirGanho)
         imgDelAll = findViewById(R.id.imageDelAll)
         btnAddGanhos.setOnClickListener {
-            if (editTextGanho.text.isEmpty() && editValorGanho.text.isEmpty()) {
+            if (editTextGanho.text.isEmpty() || editValorGanho.text.isEmpty()) {
                 editTextGanho.setError("Insira o nome do produto")
                 editValorGanho.setError("Insira um valor")
             } else {
@@ -98,6 +100,7 @@ class Ganhos : AppCompatActivity() {
             Toast.makeText(this, "INSERT FEITO COM SUCESSO", Toast.LENGTH_SHORT).show()
         }
         getUnique()
+        salvarSaldo()
 
     }
 
@@ -148,6 +151,7 @@ class Ganhos : AppCompatActivity() {
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         listaGanhos.adapter = adapter
                         valorGanho = 0
+                        salvarSaldo()
                     } else {
                         val adapter =
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
@@ -169,6 +173,7 @@ class Ganhos : AppCompatActivity() {
                 .show()
             getUnique()
             removerUltimoValor()
+            salvarSaldo()
         }
     }
 
@@ -204,6 +209,11 @@ class Ganhos : AppCompatActivity() {
     fun removerUltimoValor(){
         valorGanho -= arrayListaValor.last().toInt()
         Toast.makeText(this, valorGanho.toString(), Toast.LENGTH_SHORT).show()
+    }
+
+    fun salvarSaldo(){
+        val VALOR = Valores("valorganho", valorGanho)
+        refMain.child("valorGanho").setValue(VALOR)
     }
 
 }
