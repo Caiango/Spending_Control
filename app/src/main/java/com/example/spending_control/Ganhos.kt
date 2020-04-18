@@ -79,6 +79,7 @@ class Ganhos : AppCompatActivity() {
 
         get()
         getUnique()
+        getFirebaseValor()
     }
 
     private fun inserirGanho() {
@@ -86,10 +87,8 @@ class Ganhos : AppCompatActivity() {
         var valor: String = editValorGanho.text.toString().trim()
         var idinsert: String = ""
 
-        var valorGanho2 = editValorGanho.text.toString().trim().toInt()
+        var valorGanho2 = editValorGanho.text.toString().trim().toDouble()
         valorGanho += valorGanho2
-
-        Toast.makeText(this, valorGanho.toString(), Toast.LENGTH_SHORT).show()
 
         val UID = refGanho.push().key.toString()
         idinsert = UID
@@ -97,10 +96,10 @@ class Ganhos : AppCompatActivity() {
         val USU = User(GOOGLEUSERID, nome, valor.toDouble(), idinsert)
 
         refGanho.child(UID).setValue(USU).addOnCompleteListener {
-            Toast.makeText(this, "INSERT FEITO COM SUCESSO", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Ganho inserido com sucesso!", Toast.LENGTH_SHORT).show()
         }
         getUnique()
-        salvarSaldo()
+        salvarSaldoFirebase()
 
     }
 
@@ -151,7 +150,7 @@ class Ganhos : AppCompatActivity() {
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         listaGanhos.adapter = adapter
                         valorGanho = 0.0
-                        salvarSaldo()
+                        salvarSaldoFirebase()
                     } else {
                         val adapter =
                             AdapterList(applicationContext, R.layout.lista_layout, UserList)
@@ -172,8 +171,8 @@ class Ganhos : AppCompatActivity() {
             Toast.makeText(this, "Ultima informação removida com sucesso", Toast.LENGTH_LONG)
                 .show()
             getUnique()
-            removerUltimoValor()
-            salvarSaldo()
+            removerUltimoValorLista()
+            salvarSaldoFirebase()
         }
     }
 
@@ -195,7 +194,7 @@ class Ganhos : AppCompatActivity() {
 
                         }
                     } else {
-                        Toast.makeText(applicationContext, "Nao achei", Toast.LENGTH_LONG).show()
+                        Toast.makeText(applicationContext, "Nao há dados salvos", Toast.LENGTH_LONG).show()
                     }
 
                 }
@@ -206,15 +205,47 @@ class Ganhos : AppCompatActivity() {
             })
     }
 
-    fun removerUltimoValor(){
-        valorGanho -= arrayListaValor.last().toInt()
-        Toast.makeText(this, valorGanho.toString(), Toast.LENGTH_SHORT).show()
+    fun removerUltimoValorLista(){
+        valorGanho -= arrayListaValor.last().toDouble()
     }
 
-    fun salvarSaldo(){
-        val VALOR = Valores("valorganho", valorGanho)
-        refMain.child("valorGanho").setValue(VALOR)
+    fun salvarSaldoFirebase(){
+        val VALOR = Valores("$GOOGLEUSERID GANHO", valorGanho)
+        refMain.child("$GOOGLEUSERID GANHO").setValue(VALOR)
     }
+
+    fun getFirebaseValor(){
+        //o refmain referecia Saldo
+        //verifica dentro do banco os filhos que tiverem o idvalor = valorganho.
+        refMain.orderByChild("idvalor").equalTo("$GOOGLEUSERID GANHO").addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+
+                if (p0!!.exists()) {
+                    //se o select acima existir eu pego os filhos dentro de Saldo
+                    //children = os filhos dentro de Saldo (apenas um nesse caso)
+                    for (h in p0.children) {
+                        //para todos elementos(h) dentro dos filhos de Saldo que atenderam ao meu select,
+                        //child = pego o filho específico(h.child) dentro dos filhos de Saldo (o filho especifico é valor nesse caso),
+                        //e jogo dentro de uma variavel
+                        var valor = h.child("valor").getValue()
+                        //pego o filho espcifico, transformo em double e jogo dentro de valorDesp
+                        valorGanho = valor.toString().toDouble()
+                    }
+
+
+                } else {
+
+                }
+
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        })
+    }
+    
 
 }
 

@@ -90,6 +90,8 @@ class Despesas : AppCompatActivity() {
 
     }
 
+    //PERGUNTA SER FEITA NOS "SELECTS": EX: DOS FILHOS DE GASTOS QUEM TEM O VALOR EQUALTO? SE TIVER FAÇA O SEGUINTE...
+
     private fun inserirDesp() {
         //passo a passo da função
         var nome: String = editTextDesp.text.toString().trim()
@@ -168,7 +170,7 @@ class Despesas : AppCompatActivity() {
                         listaGastos.adapter = adapter
                         //já que excluí tudo do firebase eu seto o valor de valorDesp como 0.0
                         valorDesp = 0.0
-                        //e mando por firebase
+                        //e mando pro firebase
                         salvarSaldoFirebase()
                     } else {
                         val adapter =  AdapterList(applicationContext, R.layout.lista_layout, UserList)
@@ -184,7 +186,8 @@ class Despesas : AppCompatActivity() {
     } //ok
 
     private fun removerLast() {
-        //os filhos de Gastos que tiveram idinsert igual ao arraylistID.last serão excluidos
+        //os filhos de Gastos que tiveram idinsert igual ao arraylistID.last serão excluidos, como o idsert é igual ao UID, ou seja úncio
+        //so exclui um filho, no caso o ultimo
         refGastos.child(arrayListaID.last()).removeValue().addOnCompleteListener {
             Toast.makeText(this, "Ultima informação removida com sucesso", Toast.LENGTH_LONG)
                 .show()
@@ -240,15 +243,15 @@ class Despesas : AppCompatActivity() {
 
     fun salvarSaldoFirebase() {
         //todo insert será feito dentro do mesmo pathstring(valorDesp), ou seja um update...
-        val VALOR = Valores("valordesp", valorDesp)
-        refMain.child("valorDesp").setValue(VALOR)
+        val VALOR = Valores("$GOOGLEUSERID GASTO", valorDesp)
+        refMain.child("$GOOGLEUSERID GASTO").setValue(VALOR)
 
     }//ok
 
     fun getFirebaseValor() {
         //o refmain referecia Saldo
         //verifica dentro do banco os filhos que tiverem o idvalor = valordesp.
-        refMain.orderByChild("idvalor").equalTo("valordesp").addValueEventListener(object :
+        refMain.orderByChild("idvalor").equalTo("$GOOGLEUSERID GASTO").addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
 
@@ -262,17 +265,11 @@ class Despesas : AppCompatActivity() {
                         var valor = h.child("valor").getValue()
                         //pego o filho espcifico, transformo em double e jogo dentro de valorDesp
                         valorDesp = valor.toString().toDouble()
-                        Toast.makeText(
-                            applicationContext,
-                            "Valor das despesas é de = ${valorDesp.toString()}",
-                            Toast.LENGTH_LONG
-                        )
-                            .show()
                     }
 
 
                 } else {
-                    Toast.makeText(applicationContext, "o valor das despesas é 0", Toast.LENGTH_LONG).show()
+
                 }
 
             }
