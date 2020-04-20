@@ -1,5 +1,6 @@
 package com.example.spending_control
 
+import android.app.ProgressDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
@@ -18,16 +19,24 @@ class Despesas : AppCompatActivity() {
     lateinit var refGastos: DatabaseReference
     lateinit var refMain: DatabaseReference
     lateinit var btnAddGastos: ImageButton
+
     //lista responsavel por mostrar os dados ao usuario
     lateinit var listaGastos: ListView
     lateinit var imgDelLast: ImageButton
     lateinit var imgDelAll: ImageButton
+
     //lista para armazenar o idinsert trazidos do banco
     lateinit var arrayListaID: ArrayList<String>
+
     //lista para armazenar valores das despesas trazidos do banco
     lateinit var arrayListaValor: ArrayList<String>
+
     //variavel onde acumula o valor total de despesas, mando ela para o firebase
-    var valorDesp: Double = 0.0
+    //estatica para eu usar na outra activity
+    companion object {
+        var valorDesp: Double = 0.0
+    }
+
 
     //Variável que armazenará o idgoogle do usuário logado
     var GOOGLEUSERID: String = ""
@@ -143,6 +152,7 @@ class Despesas : AppCompatActivity() {
                     val adapter = AdapterList(applicationContext, R.layout.lista_layout, UserList)
                     UserList.clear()
                     listaGastos.adapter = adapter
+
                 }
             }
 
@@ -166,14 +176,16 @@ class Despesas : AppCompatActivity() {
                             h.ref.removeValue()
                         }
                         //seta o adapter na minha listagastos
-                        val adapter = AdapterList(applicationContext, R.layout.lista_layout, UserList)
+                        val adapter =
+                            AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         listaGastos.adapter = adapter
                         //já que excluí tudo do firebase eu seto o valor de valorDesp como 0.0
                         valorDesp = 0.0
                         //e mando pro firebase
                         salvarSaldoFirebase()
                     } else {
-                        val adapter =  AdapterList(applicationContext, R.layout.lista_layout, UserList)
+                        val adapter =
+                            AdapterList(applicationContext, R.layout.lista_layout, UserList)
                         UserList.clear()
                         listaGastos.adapter = adapter
                     }
@@ -224,7 +236,7 @@ class Despesas : AppCompatActivity() {
 
                         }
                     } else {
-                        //ainda não há informações adicionadas
+                        Toast.makeText(applicationContext, "Não há despesas salvas", Toast.LENGTH_SHORT).show()
                     }
 
                 }
@@ -242,41 +254,51 @@ class Despesas : AppCompatActivity() {
     } //ok
 
     fun salvarSaldoFirebase() {
-        //todo insert será feito dentro do mesmo pathstring(valorDesp), ou seja um update...
+        //todo insert será feito dentro do mesmo pathstring(valorDesp), ou seja um update da conta logada no google
+        //para o insert do saldo ser unico
         val VALOR = Valores("$GOOGLEUSERID GASTO", valorDesp)
         refMain.child("$GOOGLEUSERID GASTO").setValue(VALOR)
 
     }//ok
 
     fun getFirebaseValor() {
+        //Progress Bar para carregar informações
+        val progress: ProgressDialog = ProgressDialog(this)
+        progress.setTitle("ProgressDialog")
+        progress.setMessage("Carregando Dados")
+        progress.show()
         //o refmain referecia Saldo
-        //verifica dentro do banco os filhos que tiverem o idvalor = valordesp.
-        refMain.orderByChild("idvalor").equalTo("$GOOGLEUSERID GASTO").addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
+        //verifica dentro do banco os filhos que tiverem o idvalor = GOOGLEUSERID GASTO.
+        refMain.orderByChild("idvalor").equalTo("$GOOGLEUSERID GASTO")
+            .addValueEventListener(object :
+                ValueEventListener {
+                override fun onDataChange(p0: DataSnapshot) {
 
-                if (p0!!.exists()) {
-                    //se o select acima existir eu pego os filhos dentro de Saldo
-                    //children = os filhos dentro de Saldo (apenas um nesse caso)
-                    for (h in p0.children) {
-                        //para todos elementos(h) dentro dos filhos de Saldo que atenderam ao meu select,
-                        //child = pego o filho específico(h.child) dentro dos filhos de Saldo (o filho especifico é valor nesse caso),
-                        //e jogo dentro de uma variavel
-                        var valor = h.child("valor").getValue()
-                        //pego o filho espcifico, transformo em double e jogo dentro de valorDesp
-                        valorDesp = valor.toString().toDouble()
+                    if (p0!!.exists()) {
+                        //se o select acima existir eu pego os filhos dentro de Saldo
+                        //children = os filhos dentro de Saldo (apenas um nesse caso)
+                        for (h in p0.children) {
+                            //para todos elementos(h) dentro dos filhos de Saldo que atenderam ao meu select,
+                            //child = pego o filho específico(h.child) dentro dos filhos de Saldo (o filho especifico é valor nesse caso),
+                            //e jogo dentro de uma variavel
+                            var valor = h.child("valor").getValue()
+                            //pego o filho espcifico, transformo em double e jogo dentro de valorDesp
+                            valorDesp = valor.toString().toDouble()
+                            progress.hide()
+                            progress.dismiss()
+                        }
+
+
+                    } else {
+                        progress.hide()
+                        progress.dismiss()
                     }
-
-
-                } else {
 
                 }
 
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
     } //ok
 }

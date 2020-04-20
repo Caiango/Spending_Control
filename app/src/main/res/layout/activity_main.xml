@@ -24,6 +24,7 @@
         android:id="@+id/txSaldo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="148dp"
         android:gravity="center"
         android:text="SALDO"
         android:textSize="40dp"
@@ -36,11 +37,11 @@
         android:id="@+id/btGanho"
         android:layout_width="118dp"
         android:layout_height="63dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="64dp"
         android:background="@drawable/botao_form"
         android:text="Ganhos"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.791"
+        app:layout_constraintHorizontal_bias="0.784"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txSaldo" />
 
@@ -48,11 +49,11 @@
         android:id="@+id/btGasto"
         android:layout_width="116dp"
         android:layout_height="62dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="64dp"
         android:background="@drawable/botao_form"
         android:text="Despesas"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.271"
+        app:layout_constraintHorizontal_bias="0.261"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txSaldo" />
 
@@ -71,12 +72,48 @@
         android:id="@+id/ButSair"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="144dp"
+        android:layout_marginTop="152dp"
         android:background="@drawable/botao_form"
         android:text="Sair"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txSaldo" />
+
+    <Button
+        android:id="@+id/buttonCalcular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/botao_form"
+        android:text="ATUALIZAR SALDO"
+        app:layout_constraintBottom_toTopOf="@+id/txSaldo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/txMostrarDesp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="32dp"
+        android:text=""
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewIni" />
+
+    <TextView
+        android:id="@+id/txMostrarGanho"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:text=""
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewIni" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

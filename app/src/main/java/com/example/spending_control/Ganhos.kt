@@ -1,8 +1,13 @@
 package com.example.spending_control
 
 
+import android.app.ProgressDialog
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
@@ -15,14 +20,18 @@ import kotlinx.android.synthetic.main.activity_ganhos.*
 class Ganhos : AppCompatActivity() {
     lateinit var UserList: ArrayList<User>
     lateinit var refGanho: DatabaseReference
-    lateinit var refMain: DatabaseReference
     lateinit var btnAddGanhos: ImageButton
     lateinit var listaGanhos: ListView
     lateinit var imgDelLast: ImageButton
     lateinit var imgDelAll: ImageButton
     lateinit var arrayListaID: ArrayList<String>
     lateinit var arrayListaValor: ArrayList<String>
+
+    companion object {
     var valorGanho: Double = 0.0
+    var refMain: DatabaseReference = FirebaseDatabase.getInstance().getReference("Saldo")
+    }
+
 
     //Variável que armazenará o idgoogle do usuário logado
     var GOOGLEUSERID: String = ""
@@ -37,7 +46,7 @@ class Ganhos : AppCompatActivity() {
         arrayListaValor = arrayListOf()
 
         refGanho = FirebaseDatabase.getInstance().getReference("Ganhos")
-        refMain = FirebaseDatabase.getInstance().getReference("Saldo")
+        //refMain = FirebaseDatabase.getInstance().getReference("Saldo")
 
         btnAddGanhos = findViewById(R.id.imageADD)
         listaGanhos = findViewById(R.id.listaGanhos)
@@ -53,7 +62,6 @@ class Ganhos : AppCompatActivity() {
         }
         imgDelLast.setOnClickListener { removerLast() }
         imgDelAll.setOnClickListener { removerAll() }
-
 
         //Login Google
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -194,7 +202,8 @@ class Ganhos : AppCompatActivity() {
 
                         }
                     } else {
-                        Toast.makeText(applicationContext, "Nao há dados salvos", Toast.LENGTH_LONG).show()
+                        Toast.makeText(applicationContext, "Nao há dados salvos", Toast.LENGTH_LONG)
+                            .show()
                     }
 
                 }
@@ -205,47 +214,59 @@ class Ganhos : AppCompatActivity() {
             })
     }
 
-    fun removerUltimoValorLista(){
+    fun removerUltimoValorLista() {
         valorGanho -= arrayListaValor.last().toDouble()
     }
 
-    fun salvarSaldoFirebase(){
+    fun salvarSaldoFirebase() {
         val VALOR = Valores("$GOOGLEUSERID GANHO", valorGanho)
         refMain.child("$GOOGLEUSERID GANHO").setValue(VALOR)
     }
 
-    fun getFirebaseValor(){
+
+    fun getFirebaseValor() {
+        //Progress Bar para carregar informações
+        val progress: ProgressDialog = ProgressDialog(this)
+        progress.setTitle("ProgressDialog")
+        progress.setMessage("Carregando Dados")
+        progress.show()
         //o refmain referecia Saldo
         //verifica dentro do banco os filhos que tiverem o idvalor = valorganho.
-        refMain.orderByChild("idvalor").equalTo("$GOOGLEUSERID GANHO").addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(p0: DataSnapshot) {
+        refMain.orderByChild("idvalor").equalTo("$GOOGLEUSERID GANHO")
+            .addListenerForSingleValueEvent(object :
+                ValueEventListener {
+                override fun onDataChange(p0: DataSnapshot) {
 
-                if (p0!!.exists()) {
-                    //se o select acima existir eu pego os filhos dentro de Saldo
-                    //children = os filhos dentro de Saldo (apenas um nesse caso)
-                    for (h in p0.children) {
-                        //para todos elementos(h) dentro dos filhos de Saldo que atenderam ao meu select,
-                        //child = pego o filho específico(h.child) dentro dos filhos de Saldo (o filho especifico é valor nesse caso),
-                        //e jogo dentro de uma variavel
-                        var valor = h.child("valor").getValue()
-                        //pego o filho espcifico, transformo em double e jogo dentro de valorDesp
-                        valorGanho = valor.toString().toDouble()
+                    if (p0!!.exists()) {
+                        //se o select acima existir eu pego os filhos dentro de Saldo
+                        //children = os filhos dentro de Saldo (apenas um nesse caso)
+                        for (h in p0.children) {
+                            //para todos elementos(h) dentro dos filhos de Saldo que atenderam ao meu select,
+                            //child = pego o filho específico(h.child) dentro dos filhos de Saldo (o filho especifico é valor nesse caso),
+                            //e jogo dentro de uma variavel
+                            var valor = h.child("valor").getValue()
+                            //pego o filho espcifico, transformo em double e jogo dentro de valorDesp
+                            valorGanho = valor.toString().toDouble()
+                            progress.hide()
+                            progress.dismiss()
+                        }
+
+                    } else {
+                        progress.hide()
+                        progress.dismiss()
+
                     }
-
-
-                } else {
 
                 }
 
-            }
 
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
+
     }
-    
+
 
 }
 
