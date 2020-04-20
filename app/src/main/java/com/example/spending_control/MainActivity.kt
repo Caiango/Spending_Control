@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         btGanho = findViewById(R.id.btGanho)
         btUpdate = findViewById(R.id.buttonCalcular)
 
+        //Pegando cores do meu Resources
         colorLucro = ContextCompat.getColor(this, R.color.lucro)
         colorDespesa = ContextCompat.getColor(this, R.color.despesa)
         colorNeutro = ContextCompat.getColor(this, R.color.neutro)
@@ -56,19 +57,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         btUpdate.setOnClickListener {
-
-            getFirebaseValorGanho()
-
-            getFirebaseValorGasto()
-
-            saldo = saldoGanho - saldoGasto
-
-            //Limitar numero para até 2 casas decimais
-            var df = DecimalFormat("#.##")
-            df.roundingMode = RoundingMode.CEILING
-            txSaldo.text = "R$ ${df.format(saldo)}"
-
-            screenColor()
+            chamarResume()
         }
 
         //LOGIN GOOGLE
@@ -97,15 +86,23 @@ class MainActivity : AppCompatActivity() {
                 GOOGLEUSERID = userid.toString()
             }
 
+
             screenColor()
             getFirebaseValorGanho()
             getFirebaseValorGasto()
+
 
             txSaldo.text = "Saldo"
 
         }
 
 
+    }
+
+    //Onresume, quando volto pra activity ja chama esses metodos automaticamente
+    override fun onResume() {
+        super.onResume()
+        chamarResume()
     }
 
     fun screenColor() {
@@ -144,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                             //child = pego o filho específico(h.child) dentro dos filhos de Saldo (o filho especifico é valor nesse caso),
                             //e jogo dentro de uma variavel
                             var valor = h.child("valor").getValue()
-                            //pego o filho espcifico, transformo em double e jogo dentro de valorDesp
+                            //pego o filho espcifico, transformo em double e jogo dentro de saldoGanho
                             saldoGanho = valor.toString().toDouble()
                             txMostrarGanho.text = "GANHOS: R$ $saldoGanho"
                             progress.hide()
@@ -212,5 +209,19 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun chamarResume() {
+        getFirebaseValorGanho()
+
+        getFirebaseValorGasto()
+
+        saldo = saldoGanho - saldoGasto
+
+        //Limitar numero para até 2 casas decimais
+        var df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.CEILING
+        txSaldo.text = "R$ ${df.format(saldo)}"
+
+        screenColor()
+    }
 
 }
