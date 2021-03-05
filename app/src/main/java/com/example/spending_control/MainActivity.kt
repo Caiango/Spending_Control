@@ -2,26 +2,22 @@ package com.example.spending_control
 
 import android.app.ProgressDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var btDesp: Button
-    lateinit var btGanho: Button
     lateinit var googleSignInClient: GoogleSignInClient
-    lateinit var btUpdate: Button
     var saldoGanho: Double = 0.0
     var saldoGasto: Double = 0.0
     var colorLucro: Int = 0
@@ -29,18 +25,12 @@ class MainActivity : AppCompatActivity() {
     var colorNeutro: Int = 0
     var saldo: Double = 0.0
 
-
     //Variável que armazenará o idgoogle do usuário logado
     var GOOGLEUSERID: String = ""
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        btDesp = findViewById(R.id.btGasto)
-        btGanho = findViewById(R.id.btGanho)
-        btUpdate = findViewById(R.id.buttonCalcular)
 
         //Pegando cores do meu Resources
         colorLucro = ContextCompat.getColor(this, R.color.lucro)
@@ -48,16 +38,13 @@ class MainActivity : AppCompatActivity() {
         colorNeutro = ContextCompat.getColor(this, R.color.neutro)
 
         //EVENTOS DE CLICK BOTOES
-        btDesp.setOnClickListener {
+        btGasto.setOnClickListener {
             val intent = Intent(this, Despesas::class.java)
             startActivity(intent)
         }
         btGanho.setOnClickListener {
             val intent = Intent(this, Ganhos::class.java)
             startActivity(intent)
-        }
-        btUpdate.setOnClickListener {
-            chamarResume()
         }
 
         //LOGIN GOOGLE
@@ -86,11 +73,8 @@ class MainActivity : AppCompatActivity() {
                 GOOGLEUSERID = userid.toString()
             }
 
-
-            screenColor()
             getFirebaseValorGanho()
             getFirebaseValorGasto()
-
 
             txSaldo.text = "Saldo"
 
@@ -99,7 +83,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    //Onresume, quando volto pra activity ja chama esses metodos automaticamente
     override fun onResume() {
         super.onResume()
         chamarResume()
@@ -121,13 +104,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getFirebaseValorGanho() {
-        //Progress Bar para carregar informações
         val progress: ProgressDialog = ProgressDialog(this)
         progress.setTitle("Obtendo Dados")
         progress.setMessage("Carregando Dados")
         progress.show()
-        //o refmain referecia Saldo
-        //verifica dentro do banco os filhos que tiverem o idvalor = valorganho.
+
         Ganhos.refMain.orderByChild("idvalor").equalTo("$GOOGLEUSERID GANHO")
             .addListenerForSingleValueEvent(object :
                 ValueEventListener {
@@ -146,6 +127,8 @@ class MainActivity : AppCompatActivity() {
                             txMostrarGanho.text = "GANHOS: R$ $saldoGanho"
                             progress.hide()
                             progress.dismiss()
+                            updateSaldo()
+                            screenColor()
                         }
 
                     } else {
@@ -156,22 +139,19 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
-
                 override fun onCancelled(p0: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    TODO("not implemented")
                 }
             })
 
     }
 
     fun getFirebaseValorGasto() {
-        //Progress Bar para carregar informações
         val progress: ProgressDialog = ProgressDialog(this)
         progress.setTitle("Obtendo Dados")
         progress.setMessage("Carregando Dados")
         progress.show()
-        //o refmain referecia Saldo
-        //verifica dentro do banco os filhos que tiverem o idvalor = valorganho.
+
         Ganhos.refMain.orderByChild("idvalor").equalTo("$GOOGLEUSERID GASTO")
             .addListenerForSingleValueEvent(object :
                 ValueEventListener {
@@ -190,6 +170,8 @@ class MainActivity : AppCompatActivity() {
                             txMostrarDesp.text = "DESPESAS: R$ $saldoGasto"
                             progress.hide()
                             progress.dismiss()
+                            updateSaldo()
+                            screenColor()
                         }
 
                     } else {
@@ -211,17 +193,18 @@ class MainActivity : AppCompatActivity() {
 
     fun chamarResume() {
         getFirebaseValorGanho()
-
         getFirebaseValorGasto()
+        updateSaldo()
+    }
 
+    fun updateSaldo() {
         saldo = saldoGanho - saldoGasto
 
-        //Limitar numero para até 2 casas decimais
         var df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.CEILING
         txSaldo.text = "R$ ${df.format(saldo)}"
 
-        screenColor()
     }
+
 
 }

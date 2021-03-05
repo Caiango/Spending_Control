@@ -2,15 +2,11 @@ package com.example.spending_control
 
 
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -46,7 +42,7 @@ class Ganhos : AppCompatActivity() {
         arrayListaValor = arrayListOf()
 
         refGanho = FirebaseDatabase.getInstance().getReference("Ganhos")
-        //refMain = FirebaseDatabase.getInstance().getReference("Saldo")
+        refMain = FirebaseDatabase.getInstance().getReference("Saldo")
 
         btnAddGanhos = findViewById(R.id.imageADD)
         listaGanhos = findViewById(R.id.listaGanhos)

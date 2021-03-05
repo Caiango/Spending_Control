@@ -1,12 +1,9 @@
 package com.example.spending_control
 
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -71,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account!!)
-                chamar()
+                callIntent()
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
                 // ...
@@ -107,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun chamar(){
+    private fun callIntent(){
         val intent2 = Intent(this, MainActivity::class.java)
         startActivity(intent2)
     }

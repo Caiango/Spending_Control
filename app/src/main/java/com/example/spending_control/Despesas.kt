@@ -1,11 +1,11 @@
 package com.example.spending_control
 
 import android.app.ProgressDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -73,6 +73,7 @@ class Despesas : AppCompatActivity() {
             .requestEmail()
             .requestProfile()
             .build()
+
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
