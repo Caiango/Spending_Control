@@ -1,8 +1,12 @@
 package com.example.spending_control
 
 
+import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Context
 import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.Toast
@@ -24,8 +28,8 @@ class Ganhos : AppCompatActivity() {
     lateinit var arrayListaValor: ArrayList<String>
 
     companion object {
-    var valorGanho: Double = 0.0
-    var refMain: DatabaseReference = FirebaseDatabase.getInstance().getReference("Saldo")
+        var valorGanho: Double = 0.0
+        var refMain: DatabaseReference = FirebaseDatabase.getInstance().getReference("Saldo")
     }
 
 
@@ -37,6 +41,7 @@ class Ganhos : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ganhos)
+
         UserList = arrayListOf()
         arrayListaID = arrayListOf()
         arrayListaValor = arrayListOf()

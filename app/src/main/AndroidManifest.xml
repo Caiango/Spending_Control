@@ -16,9 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Ganhos" />
-        <activity android:name=".Despesas" />
-        <activity android:name=".MainActivity" android:theme="@style/AppThemeFull"></activity>
+        <activity
+            android:name=".Ganhos"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".Despesas"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppThemeFull"></activity>
     </application>
 
 </manifest>
